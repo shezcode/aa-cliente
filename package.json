@@ -1,5 +1,5 @@
 {
-  "name": "aa1_server",
+  "name": "pass_saver_aa1_cliente",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,7 +10,7 @@
     "www": "live-server www/",
     "sass": "sass --watch www/scss/custom.scss www/css/custom.css"
   },
-  "author": "",
+  "author": "a28009",
   "license": "ISC",
   "dependencies": {
     "@faker-js/faker": "^7.6.0",
