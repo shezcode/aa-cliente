@@ -10,6 +10,29 @@ function printSites(data) {
   parent.innerHTML = null; // reset elements
 
   // CREATE ROWS
+  // Create modal once
+  const modalHTML = `
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Delete</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this site?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" id="delete-btn" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+  const modalDeleteButton = document.getElementById("delete-btn");
+
   data.sites.forEach((site, index) => {
     const row = document.createElement("tr");
     const date = new Date(site.createdAt);
@@ -58,30 +81,13 @@ function printSites(data) {
     deleteButton.setAttribute("data-bs-toggle", "modal");
     deleteButton.setAttribute("data-bs-target", "#exampleModal");
     deleteButton.innerHTML = '<i class="bi bi-trash3"></i>';
-
-    const modalHTML = `
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          ...
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-`;
-
-    document.body.insertAdjacentHTML("beforeend", modalHTML);
     deleteButton.onclick = () => {
-      fetch(`${api}/sites/${site.id}`, {
+      modalDeleteButton.setAttribute("data-site-id", site.id);
+    };
+
+    modalDeleteButton.onclick = () => {
+      const siteId = modalDeleteButton.getAttribute("data-site-id");
+      fetch(`${api}/sites/${siteId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
       })
@@ -99,6 +105,11 @@ function printSites(data) {
         })
         .finally(() => {
           fetchSitesByCategory();
+          //close the modal
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("exampleModal")
+          );
+          modal.hide();
         });
     };
 
@@ -243,16 +254,45 @@ function createCategoryLink(category) {
   return child;
 }
 
+const categoryModalHTML = `
+  <div class="modal fade" id="categoryDeleteModal" tabindex="-1" aria-labelledby="categoryDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="categoryDeleteModalLabel">Delete Category</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this category?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" id="category-delete-btn" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+document.body.insertAdjacentHTML("beforeend", categoryModalHTML);
+const categoryModalDeleteButton = document.getElementById(
+  "category-delete-btn"
+);
+
 function createDeleteButton(category) {
   const deleteCatBtn = document.createElement("button");
   deleteCatBtn.type = "button";
   deleteCatBtn.className = "btn red-btn";
   deleteCatBtn.innerHTML = '<i class="bi bi-trash3"></i>';
-  deleteCatBtn.onclick = () => deleteCategory(category.id);
+  deleteCatBtn.setAttribute("data-bs-toggle", "modal");
+  deleteCatBtn.setAttribute("data-bs-target", "#categoryDeleteModal");
+  deleteCatBtn.onclick = () => {
+    categoryModalDeleteButton.setAttribute("data-category-id", category.id);
+  };
   return deleteCatBtn;
 }
 
-function deleteCategory(categoryId) {
+categoryModalDeleteButton.onclick = () => {
+  const categoryId = categoryModalDeleteButton.getAttribute("data-category-id");
   fetch(`${api}/categories/${categoryId}`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
@@ -271,8 +311,12 @@ function deleteCategory(categoryId) {
     })
     .finally(() => {
       fetchAllCategories();
+      const modal = bootstrap.Modal.getInstance(
+        document.getElementById("categoryDeleteModal")
+      );
+      modal.hide();
     });
-}
+};
 
 function fetchSitesByCategory() {
   fetch(`${api}/categories/${selectedCategoryId ?? 1}`, {
