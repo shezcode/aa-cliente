@@ -68,11 +68,79 @@
               <label for="user" class="form-label">Name:</label>
               <input type="text" class="form-control" id="categoryName">
             </div>
+            <label for="iconSelect" class="form-label">Choose an Option</label>
+            <div class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" id="iconDropdown" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Pick an icon
+              </button>
+              <ul class="dropdown-menu p-3">
+                <input type="hidden" id="selectedIcon" name="selectedIcon">
+                <div class="row">
+                  <li class="col-4">
+                    <button class="dropdown-item align-items-center" data-icon="bi bi-archive">
+                      <i class="bi bi-archive"></i>
+                    </button>
+                  </li>
+                  <li class="col-4">
+                    <button class="dropdown-item align-items-center" data-icon="bi bi-bank">
+                      <i class="bi bi-bank"></i>
+                    </button>
+                  </li>
+                  <li class="col-4">
+                    <button class="dropdown-item align-items-center" data-icon="bi bi-at">
+                      <i class="bi bi-at"></i>
+                    </button>
+                  </li>
+                  <li class="col-4">
+                    <button class="dropdown-item align-items-center" data-icon="bi bi-bell-fill">
+                      <i class="bi bi-bell-fill"></i>
+                    </button>
+                  </li>
+                  <li class="col-4">
+                    <button class="dropdown-item align-items-center" data-icon="bi bi-broadcast-pin">
+                      <i class="bi bi-broadcast-pin"></i>
+                    </button>
+                  </li>
+                  <li class="col-4">
+                    <button class="dropdown-item align-items-center" data-icon="bi bi-briefcase">
+                      <i class="bi bi-briefcase"></i>
+                    </button>
+                  </li>
+                  <li class="col-4">
+                    <button class="dropdown-item align-items-center" data-icon="bi bi-command">
+                      <i class="bi bi-command"></i>
+                    </button>
+                  </li>
+                  <li class="col-4">
+                    <button class="dropdown-item align-items-center" data-icon="bi bi-envelope-open">
+                      <i class="bi bi-envelope-open"></i>
+                    </button>
+                  </li>
+                </div>
+              </ul>
+              <div class="my-3">
+                <label for="selectedValue" class="form-label">Selected Icon:</label>
+                <input type="text" class="form-control" id="selectedValue" placeholder="No icon selected" readonly>
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-outline-primary" id="addCatBtn">Save</button>
             <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancel</button>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="liveToast" class="toast align-items-center text-bg-danger" role="alert" aria-live="assertive"
+        aria-atomic="true">
+        <div class="toast-header">
+          <i class="bi-error"></i>
+          <strong class="me-auto">Error</strong>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
         </div>
       </div>
     </div>
