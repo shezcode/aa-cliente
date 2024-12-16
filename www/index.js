@@ -138,16 +138,30 @@ function setupAddCategoryButton() {
 
 function handleAddCategoryClick() {
   const categoryName = getCategoryNameInput();
+  const selectedIcon = document.getElementById("selectedIcon").value;
+  const categoryIcons = document.querySelectorAll(".dropdown-item");
+  categoryIcons.forEach((item) => {
+    item.addEventListener("click", function () {
+      const iconClass = this.querySelector("i").className;
+      document.getElementById("selectedIcon").value = iconClass;
+    });
+  });
+
+  console.log("selectedIcon: ", selectedIcon);
+
   if (!categoryName) {
-    alert("Please enter a category name");
+    //alert("Please enter a category name");
+    showToast("Please enter a category name");
     return;
   }
   if (categoryName.length < 3) {
-    alert("Category name must be at least 3 characters");
+    //alert("Category name must be at least 3 characters");
+    showToast("Category name must be at least 3 characters");
     return;
   }
   if (categoryName.length > 15) {
-    alert("Category name must be less than 15 characters");
+    //alert("Category name must be less than 15 characters");
+    showToast("Category name must be less than 15 characters");
     return;
   }
   createCategory(categoryName)
@@ -156,7 +170,8 @@ function handleAddCategoryClick() {
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert("Error when creating new category");
+      //alert("Error when creating new category");
+      showToast("Error when creating new category");
     })
     .finally(() => {
       closeCategoryModal();
@@ -202,7 +217,7 @@ function setupAddSiteButton() {
   const addSiteButton = document.getElementById("addSiteButton");
   addSiteButton.onclick = () => {
     if (!selectedCategoryId) {
-      alert("Please select a category first");
+      showToast("Please select a category first");
       return;
     }
     window.location.href = `newsite.html#${selectedCategoryId}`;
@@ -273,6 +288,7 @@ const categoryModalHTML = `
     </div>
   </div>
 `;
+
 document.body.insertAdjacentHTML("beforeend", categoryModalHTML);
 const categoryModalDeleteButton = document.getElementById(
   "category-delete-btn"
@@ -307,7 +323,7 @@ categoryModalDeleteButton.onclick = () => {
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert(`Error: ${error}`);
+      showToast(`Error: ${error}`);
     })
     .finally(() => {
       fetchAllCategories();
@@ -326,7 +342,8 @@ function fetchSitesByCategory() {
     .then((data) => printSites(data))
     .catch((error) => {
       console.error("Error:", error);
-      alert("Could not retrieve sites from category");
+      //alert("Could not retrieve sites from category");
+      showToast("Could not retrieve sites from category");
       printSites([]);
     });
 }
@@ -339,9 +356,18 @@ function fetchAllCategories() {
     .then((data) => printCategories(data))
     .catch((error) => {
       console.error("Error:", error);
-      alert("Could not retrieve all categories");
+      //alert("Could not retrieve all categories");
+      showToast("Could not retrieve all categories");
       printCategories([]);
     });
+}
+
+function showToast(message) {
+  const toastLiveExample = document.getElementById("liveToast");
+  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+  const toastMsg = document.querySelector(".toast-body");
+  toastMsg.innerText = message;
+  toastBootstrap.show();
 }
 
 window.onload = function () {
