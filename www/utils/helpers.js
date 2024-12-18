@@ -32,3 +32,27 @@ export function generateSafePassword(length = 16) {
 
   return shuffledPassword;
 }
+
+export function errorToast(message) {
+  const toastLiveExample = document.getElementById("liveToast");
+  toastLiveExample.classList.remove("text-success");
+  toastLiveExample.classList.add("text-danger");
+  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+  const toastTitle = document.getElementById("toast-title");
+  toastTitle.innerText = "Error";
+  const toastMsg = document.querySelector(".toast-body");
+  toastMsg.innerText = message;
+  toastBootstrap.show();
+}
+
+export function successToast(message) {
+  const toastLiveExample = document.getElementById("liveToast");
+  toastLiveExample.classList.remove("text-danger");
+  toastLiveExample.classList.add("text-success");
+  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+  const toastTitle = document.getElementById("toast-title");
+  toastTitle.innerText = "Success";
+  const toastMsg = document.querySelector(".toast-body");
+  toastMsg.innerText = message;
+  toastBootstrap.show();
+}

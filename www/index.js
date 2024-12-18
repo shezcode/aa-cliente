@@ -1,6 +1,7 @@
 "use strict";
 import { capitalize } from "./utils/helpers.js";
 import { apiCalls } from "./apiCalls.js";
+import { errorToast, successToast } from "./utils/helpers.js";
 
 const apiUrl = "http://localhost:3000";
 let selectedCategoryId = undefined;
@@ -105,6 +106,7 @@ function printSites(data) {
           alert("Error:", error);
         })
         .finally(() => {
+          successToast("Site deleted successfully");
           fetchSitesByCategory();
           //close the modal
           const modal = bootstrap.Modal.getInstance(
@@ -152,27 +154,28 @@ function handleAddCategoryClick() {
 
   if (!categoryName) {
     //alert("Please enter a category name");
-    showToast("Please enter a category name");
+    errorToast("Please enter a category name");
     return;
   }
   if (categoryName.length < 3) {
     //alert("Category name must be at least 3 characters");
-    showToast("Category name must be at least 3 characters");
+    errorToast("Category name must be at least 3 characters");
     return;
   }
   if (categoryName.length > 15) {
     //alert("Category name must be less than 15 characters");
-    showToast("Category name must be less than 15 characters");
+    errorToast("Category name must be less than 15 characters");
     return;
   }
   createCategory(categoryName)
     .then((data) => {
-      console.log("New category created:", data);
+      //console.log("New category created:", data);
+      successToast("New category created");
     })
     .catch((error) => {
       console.error("Error:", error);
       //alert("Error when creating new category");
-      showToast("Error when creating new category");
+      errorToast("Error when creating new category");
     })
     .finally(() => {
       closeCategoryModal();
@@ -218,7 +221,7 @@ function setupAddSiteButton() {
   const addSiteButton = document.getElementById("addSiteButton");
   addSiteButton.onclick = () => {
     if (!selectedCategoryId) {
-      showToast("Please select a category first");
+      errorToast("Please select a category first");
       return;
     }
     window.location.href = `newsite.html#${selectedCategoryId}`;
@@ -319,6 +322,7 @@ categoryModalDeleteButton.onclick = () => {
     .then((resp) => {
       if (resp.ok) {
         console.log("Category deleted successfully");
+        successToast("Category deleted successfully");
       } else {
         console.error("Error processing request");
         throw new Error("Error processing request");
@@ -326,14 +330,14 @@ categoryModalDeleteButton.onclick = () => {
     })
     .catch((error) => {
       console.error("Error:", error);
-      showToast(`Error: ${error}`);
+      errorToast(`Error: ${error}`);
     })
     .finally(() => {
-      fetchAllCategories();
       const modal = bootstrap.Modal.getInstance(
         document.getElementById("categoryDeleteModal")
       );
       modal.hide();
+      fetchAllCategories();
     });
 };
 
@@ -346,7 +350,7 @@ function fetchSitesByCategory() {
     .catch((error) => {
       console.error("Error:", error);
       //alert("Could not retrieve sites from category");
-      showToast("Could not retrieve sites from category");
+      errorToast("Could not retrieve sites from category");
       printSites([]);
     });
 }
@@ -360,17 +364,9 @@ function fetchAllCategories() {
     .catch((error) => {
       console.error("Error:", error);
       //alert("Could not retrieve all categories");
-      showToast("Could not retrieve all categories");
+      errorToast("Could not retrieve all categories");
       printCategories([]);
     });
-}
-
-function showToast(message) {
-  const toastLiveExample = document.getElementById("liveToast");
-  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-  const toastMsg = document.querySelector(".toast-body");
-  toastMsg.innerText = message;
-  toastBootstrap.show();
 }
 
 window.onload = function () {

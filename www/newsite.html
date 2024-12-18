@@ -44,6 +44,19 @@
     <button class="btn btn-outline-primary" id="submitButton">Save</button>
     <a class="btn btn-outline-danger" href="/">Cancel</a>
   </div>
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="liveToast" class="toast align-items-center text-success" role="alert" aria-live="assertive"
+      aria-atomic="true">
+      <div class="toast-header">
+        <i class="bi-error"></i>
+        <strong class="me-auto" id="toast-title"></strong>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+      </div>
+    </div>
+  </div>
+
 </body>
 
 <script type="module" src="/newsite.js"></script>
