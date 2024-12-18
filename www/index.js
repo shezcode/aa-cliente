@@ -1,8 +1,11 @@
 "use strict";
 import { capitalize } from "./utils/helpers.js";
+import { apiCalls } from "./apiCalls.js";
 
-const api = "http://localhost:3000";
+const apiUrl = "http://localhost:3000";
 let selectedCategoryId = undefined;
+
+const api = new apiCalls(apiUrl);
 
 function printSites(data) {
   console.log("data received: ", data);
@@ -87,10 +90,8 @@ function printSites(data) {
 
     modalDeleteButton.onclick = () => {
       const siteId = modalDeleteButton.getAttribute("data-site-id");
-      fetch(`${api}/sites/${siteId}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      })
+      api
+        .delete(`sites/${siteId}`)
         .then((resp) => {
           if (resp.ok) {
             console.log("borrado correctamente");
@@ -185,7 +186,7 @@ function getCategoryNameInput() {
 }
 
 function createCategory(name) {
-  return fetch(`${api}/categories`, {
+  return fetch(`${apiUrl}/categories`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name }),
@@ -309,10 +310,12 @@ function createDeleteButton(category) {
 
 categoryModalDeleteButton.onclick = () => {
   const categoryId = categoryModalDeleteButton.getAttribute("data-category-id");
-  fetch(`${api}/categories/${categoryId}`, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-  })
+  //  fetch(`${apiUrl}/categories/${categoryId}`, {
+  //    method: "DELETE",
+  //    headers: { "Content-Type": "application/json" },
+  //  })
+  api
+    .delete(`categories/${categoryId}`)
     .then((resp) => {
       if (resp.ok) {
         console.log("Category deleted successfully");
@@ -335,7 +338,7 @@ categoryModalDeleteButton.onclick = () => {
 };
 
 function fetchSitesByCategory() {
-  fetch(`${api}/categories/${selectedCategoryId ?? 1}`, {
+  fetch(`${apiUrl}/categories/${selectedCategoryId ?? 1}`, {
     headers: { "Content-Type": "application/json" },
   })
     .then((res) => res.json())
@@ -349,7 +352,7 @@ function fetchSitesByCategory() {
 }
 
 function fetchAllCategories() {
-  fetch(`${api}/categories`, {
+  fetch(`${apiUrl}/categories`, {
     headers: { "Content-Type": "application/json" },
   })
     .then((res) => res.json())
