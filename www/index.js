@@ -189,11 +189,7 @@ function getCategoryNameInput() {
 }
 
 function createCategory(name) {
-  return fetch(`${apiUrl}/categories`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name }),
-  }).then((res) => {
+  return api.post("categories", { name }).then((res) => {
     if (res.ok) {
       return res.json();
     }
@@ -342,9 +338,8 @@ categoryModalDeleteButton.onclick = () => {
 };
 
 function fetchSitesByCategory() {
-  fetch(`${apiUrl}/categories/${selectedCategoryId ?? 1}`, {
-    headers: { "Content-Type": "application/json" },
-  })
+  api
+    .get(`categories/${selectedCategoryId}`)
     .then((res) => res.json())
     .then((data) => printSites(data))
     .catch((error) => {
@@ -356,9 +351,8 @@ function fetchSitesByCategory() {
 }
 
 function fetchAllCategories() {
-  fetch(`${apiUrl}/categories`, {
-    headers: { "Content-Type": "application/json" },
-  })
+  api
+    .get("categories")
     .then((res) => res.json())
     .then((data) => printCategories(data))
     .catch((error) => {
