@@ -1,8 +1,11 @@
 "use strict";
 import { generateSafePassword } from "./utils/helpers.js";
+import { apiCalls } from "./apiCalls.js";
+import { successToast, errorToast } from "./utils/helpers.js";
 
 // GLOBAL STATE
-const apiOrigin = "http://localhost:3000";
+const apiUrl = "http://localhost:3000";
+const api = new apiCalls(apiUrl);
 const urlHashInfo = window.location.hash.replace("#", "").split("-");
 const selectedCategoryId = urlHashInfo[0];
 const selectedSiteId = urlHashInfo[1];
@@ -46,7 +49,8 @@ submitButton.onclick = () => {
 };
 
 function fetchData() {
-  fetch(`${apiOrigin}/sites/${selectedSiteId}`)
+  api
+    .get(`sites/${selectedSiteId}`)
     .then((res) => res.json())
     .then((data) => {
       urlField.value = data.url;
@@ -57,12 +61,12 @@ function fetchData() {
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert("Error:", error);
+      errorToast("Error fetching data");
     });
 }
 
 function createSite() {
-  fetch(`${apiOrigin}/categories/${selectedCategoryId}`, {
+  fetch(`${apiUrl}/categories/${selectedCategoryId}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -75,18 +79,21 @@ function createSite() {
   })
     .then((res) => {
       if (!res.ok) {
-        alert(`error when creating site`);
+        errorToast("Error creating site");
       }
-      window.location.href = "/";
+      successToast("Site created successfully");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 2000);
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert();
+      errorToast("Error creating site");
     });
 }
 
 function updateSite() {
-  fetch(`${apiOrigin}/sites/${selectedSiteId}`, {
+  fetch(`${apiUrl}/sites/${selectedSiteId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -99,13 +106,16 @@ function updateSite() {
   })
     .then((res) => {
       if (!res.ok) {
-        alert(`error when modifying site`);
+        errorToast("Error updating site");
       }
-      window.location.href = "/";
+      successToast("Site updated successfully");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 2000);
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert();
+      errorToast("Error updating site");
     });
 }
 
