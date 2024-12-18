@@ -4,37 +4,16 @@ import { apiCalls } from "./apiCalls.js";
 import { errorToast, successToast } from "./utils/helpers.js";
 
 const apiUrl = "http://localhost:3000";
-let selectedCategoryId = undefined;
-
 const api = new apiCalls(apiUrl);
 
-function printSites(data) {
-  console.log("data received: ", data);
+let selectedCategoryId = undefined;
+
+function printSiteData(data) {
+  //console.log("data received: ", data);
   const parent = document.getElementsByTagName("tbody")[0];
   parent.innerHTML = null; // reset elements
 
   // CREATE ROWS
-  // Create modal once
-  const modalHTML = `
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Delete</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Are you sure you want to delete this site?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" id="delete-btn" class="btn btn-danger">Delete</button>
-        </div>
-      </div>
-    </div>
-  </div>
-`;
-  document.body.insertAdjacentHTML("beforeend", modalHTML);
   const modalDeleteButton = document.getElementById("delete-btn");
 
   data.sites.forEach((site, index) => {
@@ -122,7 +101,7 @@ function printSites(data) {
     editButton.className = "btn";
     editButton.insertAdjacentHTML("beforeend", '<i class="bi bi-pen"></i>');
     editButton.onclick = () =>
-      (window.location.href = `newsite.html#${selectedCategoryId}-${site.id}`);
+      (window.location.href = `newsite.html#${selectedCategoryId}/${site.id}`);
 
     actionsCell.appendChild(openButton);
     actionsCell.appendChild(editButton);
@@ -269,27 +248,6 @@ function createCategoryLink(category) {
   return child;
 }
 
-const categoryModalHTML = `
-  <div class="modal fade" id="categoryDeleteModal" tabindex="-1" aria-labelledby="categoryDeleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="categoryDeleteModalLabel">Delete Category</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Are you sure you want to delete this category?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" id="category-delete-btn" class="btn btn-danger">Delete</button>
-        </div>
-      </div>
-    </div>
-  </div>
-`;
-
-document.body.insertAdjacentHTML("beforeend", categoryModalHTML);
 const categoryModalDeleteButton = document.getElementById(
   "category-delete-btn"
 );
@@ -309,10 +267,6 @@ function createDeleteButton(category) {
 
 categoryModalDeleteButton.onclick = () => {
   const categoryId = categoryModalDeleteButton.getAttribute("data-category-id");
-  //  fetch(`${apiUrl}/categories/${categoryId}`, {
-  //    method: "DELETE",
-  //    headers: { "Content-Type": "application/json" },
-  //  })
   api
     .delete(`categories/${categoryId}`)
     .then((resp) => {
@@ -341,12 +295,11 @@ function fetchSitesByCategory() {
   api
     .get(`categories/${selectedCategoryId}`)
     .then((res) => res.json())
-    .then((data) => printSites(data))
+    .then((data) => printSiteData(data))
     .catch((error) => {
       console.error("Error:", error);
-      //alert("Could not retrieve sites from category");
-      errorToast("Could not retrieve sites from category");
-      printSites([]);
+      errorToast("Could not get the sites from this category");
+      printSiteData([]);
     });
 }
 
@@ -354,11 +307,13 @@ function fetchAllCategories() {
   api
     .get("categories")
     .then((res) => res.json())
-    .then((data) => printCategories(data))
+    .then((data) => {
+      printCategories(data);
+      return data;
+    })
     .catch((error) => {
       console.error("Error:", error);
-      //alert("Could not retrieve all categories");
-      errorToast("Could not retrieve all categories");
+      errorToast("Could not get all categories");
       printCategories([]);
     });
 }

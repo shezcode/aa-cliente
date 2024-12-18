@@ -6,7 +6,7 @@ import { successToast, errorToast } from "./utils/helpers.js";
 // GLOBAL STATE
 const apiUrl = "http://localhost:3000";
 const api = new apiCalls(apiUrl);
-const urlHashInfo = window.location.hash.replace("#", "").split("-");
+const urlHashInfo = window.location.hash.replace("#", "").split("/");
 const selectedCategoryId = urlHashInfo[0];
 const selectedSiteId = urlHashInfo[1];
 
@@ -23,6 +23,7 @@ const passwordField = document.getElementById("password");
 const descriptionField = document.getElementById("description");
 
 const autogenPwdBtn = document.getElementById("autogenPwd");
+const copyPwdBtn = document.getElementById("copyPwd");
 const submitButton = document.getElementById("submitButton");
 
 //init fields to avoid undefined values
@@ -38,6 +39,12 @@ autogenPwdBtn.onclick = () => {
   const password = generateSafePassword();
   //console.log("password", password);
   passwordField.value = password;
+};
+
+copyPwdBtn.onclick = () => {
+  passwordField.select();
+  navigator.clipboard.writeText(passwordField.value);
+  successToast("Password copied to clipboard");
 };
 
 submitButton.onclick = () => {
