@@ -39,9 +39,9 @@ autogenPwdBtn.onclick = () => {
 
 submitButton.onclick = () => {
   if (selectedSiteId) {
-    upsertSite("PUT");
+    updateSite();
   } else {
-    upsertSite("POST");
+    createSite();
   }
 };
 
@@ -61,9 +61,9 @@ function fetchData() {
     });
 }
 
-function upsertSite(method) {
-  fetch(`${apiOrigin}/sites/${selectedSiteId ?? ""}`, {
-    method: method,
+function createSite() {
+  fetch(`${apiOrigin}/categories/${selectedCategoryId}`, {
+    method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       name: nameField.value,
@@ -75,7 +75,31 @@ function upsertSite(method) {
   })
     .then((res) => {
       if (!res.ok) {
-        alert(`error when ${selectedSiteId ? "modifying" : "creating"} site`);
+        alert(`error when creating site`);
+      }
+      window.location.href = "/";
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert();
+    });
+}
+
+function updateSite() {
+  fetch(`${apiOrigin}/sites/${selectedSiteId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: nameField.value,
+      url: urlField.value,
+      user: userField.value,
+      password: passwordField.value,
+      description: descriptionField.value,
+    }),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        alert(`error when modifying site`);
       }
       window.location.href = "/";
     })
