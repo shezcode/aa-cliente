@@ -66,17 +66,14 @@ function fetchData() {
 }
 
 function createSite() {
-  fetch(`${apiUrl}/categories/${selectedCategoryId}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+  api
+    .post(`categories/${selectedCategoryId}`, {
       name: nameField.value,
       url: urlField.value,
       user: userField.value,
       password: passwordField.value,
       description: descriptionField.value,
-    }),
-  })
+    })
     .then((res) => {
       if (!res.ok) {
         errorToast("Error creating site");
@@ -93,17 +90,14 @@ function createSite() {
 }
 
 function updateSite() {
-  fetch(`${apiUrl}/sites/${selectedSiteId}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+  api
+    .put(`sites/${selectedSiteId}`, {
       name: nameField.value,
       url: urlField.value,
       user: userField.value,
       password: passwordField.value,
       description: descriptionField.value,
-    }),
-  })
+    })
     .then((res) => {
       if (!res.ok) {
         errorToast("Error updating site");
