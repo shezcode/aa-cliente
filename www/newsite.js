@@ -47,7 +47,8 @@ copyPwdBtn.onclick = () => {
   successToast("Password copied to clipboard");
 };
 
-submitButton.onclick = () => {
+submitButton.onclick = (e) => {
+  e.preventDefault();
   if (selectedSiteId) {
     updateSite();
   } else {

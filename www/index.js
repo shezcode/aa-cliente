@@ -7,6 +7,7 @@ const apiUrl = "http://localhost:3000";
 const api = new apiCalls(apiUrl);
 
 let selectedCategoryId = undefined;
+let categoryIcons = {};
 
 function printSiteData(data) {
   //console.log("data received: ", data);
@@ -118,16 +119,27 @@ function setupAddCategoryButton() {
   addCategoryBtn.onclick = handleAddCategoryClick;
 }
 
+function setupIconSelection() {
+  const categoryIcons = document.querySelectorAll(".dropdown-item[data-icon]");
+  const selectedIconInput = document.getElementById("selectedIcon");
+  const selectedValueInput = document.getElementById("selectedValue");
+  const dropdownButton = document.getElementById("iconDropdown");
+
+  categoryIcons.forEach((item) => {
+    item.addEventListener("click", function (e) {
+      e.preventDefault();
+      const iconClass = this.getAttribute("data-icon");
+
+      selectedIconInput.value = iconClass;
+      selectedValueInput.value = iconClass;
+      dropdownButton.innerHTML = `<i class="${iconClass}"></i> ${iconClass}`;
+    });
+  });
+}
+
 function handleAddCategoryClick() {
   const categoryName = getCategoryNameInput();
   const selectedIcon = document.getElementById("selectedIcon").value;
-  const categoryIcons = document.querySelectorAll(".dropdown-item");
-  categoryIcons.forEach((item) => {
-    item.addEventListener("click", function () {
-      const iconClass = this.querySelector("i").className;
-      document.getElementById("selectedIcon").value = iconClass;
-    });
-  });
 
   console.log("selectedIcon: ", selectedIcon);
 
@@ -148,6 +160,9 @@ function handleAddCategoryClick() {
   }
   createCategory(categoryName)
     .then((data) => {
+      if (selectedIcon) {
+        categoryIcons[data.id] = selectedIcon;
+      }
       //console.log("New category created:", data);
       successToast("New category created");
     })
@@ -159,8 +174,15 @@ function handleAddCategoryClick() {
     .finally(() => {
       closeCategoryModal();
       fetchAllCategories();
-      document.getElementById("categoryName").value = "";
+      resetCategoryForm();
     });
+}
+
+function resetCategoryForm() {
+  document.getElementById("categoryName").value = "";
+  document.getElementById("selectedIcon").value = "";
+  document.getElementById("selectedValue").value = "";
+  document.getElementById("iconDropdown").innerHTML = "Pick an icon";
 }
 
 function getCategoryNameInput() {
@@ -236,7 +258,10 @@ function createCategoryElement(category) {
 
 function createCategoryLink(category) {
   const child = document.createElement("a");
-  child.innerText = capitalize(category.name);
+  const icon = categoryIcons[category.id];
+  child.innerHTML = `${icon ? `<i class="${icon}"></i> ` : ""}${capitalize(
+    category.name
+  )}`;
   child.className = `nav-link ${
     category.id === selectedCategoryId ? "active" : ""
   }`;
@@ -324,4 +349,5 @@ window.onload = function () {
   }
   fetchAllCategories();
   setupAddCategoryButton();
+  setupIconSelection();
 };
